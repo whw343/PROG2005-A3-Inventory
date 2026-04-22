@@ -1,0 +1,127 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Add Item</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Add Item</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="form-container">
+    <!-- Success message -->
+    <ion-card *ngIf="successMessage" class="success-card" color="success">
+      <ion-card-content>
+        <p>{{ successMessage }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Error messages -->
+    <ion-card *ngIf="errors.length > 0" class="error-card" color="danger">
+      <ion-card-content>
+        <p *ngFor="let err of errors">{{ err }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Add item form -->
+    <ion-list class="form-list">
+      <ion-item>
+        <ion-input
+          [(ngModel)]="formData.itemName"
+          label="Item Name"
+          label-placement="stacked"
+          placeholder="e.g., MacBook Pro 16"
+          [required]="true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="formData.itemCategory"
+          label="Category"
+          label-placement="stacked"
+          interface="popover"
+          [required]="true"
+        >
+          <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          [(ngModel)]="formData.itemQuantity"
+          label="Quantity"
+          label-placement="stacked"
+          type="number"
+          min="0"
+          placeholder="0"
+          [required]="true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          [(ngModel)]="formData.itemPrice"
+          label="Price (AUD)"
+          label-placement="stacked"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          [required]="true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="formData.featuredItem"
+          label="Featured"
+          label-placement="stacked"
+          interface="popover"
+        >
+          <ion-select-option [value]="0">No</ion-select-option>
+          <ion-select-option [value]="1">Yes</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          [(ngModel)]="formData.specialNote"
+          label="Special Note"
+          label-placement="stacked"
+          placeholder="Optional notes about this item..."
+          rows="3"
+        ></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <!-- Action buttons -->
+    <div class="form-actions">
+      <ion-button
+        expand="block"
+        (click)="onSubmit()"
+        [disabled]="isSubmitting"
+        color="primary"
+      >
+        <ion-spinner *ngIf="isSubmitting" name="crescent" slot="start"></ion-spinner>
+        {{ isSubmitting ? 'Creating...' : 'Add Item' }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="resetForm()"
+        [disabled]="isSubmitting"
+        color="medium"
+      >
+        Reset
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Help widget -->
+  <app-help-widget [tips]="helpTips" pageTitle="Add Item"></app-help-widget>
+</ion-content>
