@@ -7,24 +7,30 @@ describe('ApiService', () => {
   let service: ApiService;
   let httpMock: HttpTestingController;
 
+  const API_URL = 'https://prog2005.it.scu.edu.au/ArtGalley';
+
   const mockItems: InventoryItem[] = [
     {
-      itemId: 1,
-      itemName: 'Laptop Pro',
-      itemCategory: 'Laptop',
-      itemQuantity: 10,
-      itemPrice: 1299.99,
-      featuredItem: 1,
-      specialNote: 'High-end model',
+      item_id: 1,
+      item_name: 'Laptop Pro',
+      category: 'Electronics',
+      quantity: 10,
+      price: 1299.99,
+      supplier_name: 'Apple',
+      stock_status: 'In stock',
+      featured_item: 1,
+      special_note: 'High-end model',
     },
     {
-      itemId: 2,
-      itemName: 'Wireless Mouse',
-      itemCategory: 'Mouse',
-      itemQuantity: 50,
-      itemPrice: 29.99,
-      featuredItem: 0,
-      specialNote: '',
+      item_id: 2,
+      item_name: 'Wireless Mouse',
+      category: 'Electronics',
+      quantity: 50,
+      price: 29.99,
+      supplier_name: 'Logitech',
+      stock_status: 'In stock',
+      featured_item: 0,
+      special_note: '',
     },
   ];
 
@@ -45,69 +51,70 @@ describe('ApiService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch all items via GET', () => {
+  it('should fetch all items via GET /ArtGalley', () => {
     service.getAllItems().subscribe(items => {
       expect(items.length).toBe(2);
       expect(items).toEqual(mockItems);
     });
 
-    const req = httpMock.expectOne(service['apiUrl']);
+    const req = httpMock.expectOne(API_URL);
     expect(req.request.method).toBe('GET');
     req.flush(mockItems);
   });
 
-  it('should fetch single item by ID via GET', () => {
-    service.getItemById(1).subscribe(item => {
-      expect(item).toEqual(mockItems[0]);
+  it('should fetch items by name via GET /ArtGalley/{name}', () => {
+    service.getItemByName('Laptop Pro').subscribe(items => {
+      expect(items.length).toBe(1);
+      expect(items[0].item_name).toBe('Laptop Pro');
     });
 
-    const req = httpMock.expectOne(`${service['apiUrl']}/1`);
+    const req = httpMock.expectOne(`${API_URL}/Laptop%20Pro`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockItems[0]);
+    req.flush([mockItems[0]]);
   });
 
-  it('should create item via POST', () => {
+  it('should create item via POST /ArtGalley', () => {
     const newItem: CreateInventoryItem = {
-      itemName: 'New Tablet',
-      itemCategory: 'Tablet',
-      itemQuantity: 5,
-      itemPrice: 499.99,
-      featuredItem: 0,
-      specialNote: 'Mid-range',
+      item_name: 'New Tablet',
+      category: 'Electronics',
+      quantity: 5,
+      price: 499.99,
+      supplier_name: 'Samsung',
+      stock_status: 'In stock',
+      featured_item: 0,
+      special_note: 'Mid-range',
     };
 
-    const createdItem: InventoryItem = { ...newItem, itemId: 3 };
+    const createdItem: InventoryItem = { ...newItem, item_id: 3 };
 
     service.createItem(newItem).subscribe(item => {
-      expect(item.itemName).toBe('New Tablet');
-      expect(item.itemId).toBe(3);
+      expect(item.item_name).toBe('New Tablet');
+      expect(item.item_id).toBe(3);
     });
 
-    const req = httpMock.expectOne(service['apiUrl']);
+    const req = httpMock.expectOne(API_URL);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newItem);
     req.flush(createdItem);
   });
 
-  it('should update item via PUT', () => {
-    const updatedFields = { itemQuantity: 20, itemPrice: 1199.99 };
+  it('should update item via PUT /ArtGalley/{name}', () => {
+    const updatedFields = { quantity: 20, price: 1199.99 };
 
-    service.updateItem(1, updatedFields).subscribe(item => {
-      expect(item.itemQuantity).toBe(20);
-    });
+    service.updateItem('Laptop Pro', updatedFields).subscribe();
 
-    const req = httpMock.expectOne(`${service['apiUrl']}/1`);
+    const req = httpMock.expectOne(`${API_URL}/Laptop%20Pro`);
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(updatedFields);
     req.flush({ ...mockItems[0], ...updatedFields });
   });
 
-  it('should delete item via DELETE', () => {
-    service.deleteItem(2).subscribe(response => {
+  it('should delete item via DELETE /ArtGalley/{name}', () => {
+    service.deleteItem('Wireless Mouse').subscribe(response => {
       expect(response).toBeTruthy();
     });
 
-    const req = httpMock.expectOne(`${service['apiUrl']}/2`);
+    const req = httpMock.expectOne(`${API_URL}/Wireless%20Mouse`);
     expect(req.request.method).toBe('DELETE');
     req.flush({});
   });
@@ -120,7 +127,19 @@ describe('ApiService', () => {
       },
     });
 
-    const req = httpMock.expectOne(service['apiUrl']);
+    const req = httpMock.expectOne(API_URL);
     req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+  });
+
+  it('should handle 404 error with not found message', () => {
+    service.getItemByName('NonExistent').subscribe({
+      next: () => fail('should have failed'),
+      error: (error) => {
+        expect(error.message).toContain('not found');
+      },
+    });
+
+    const req = httpMock.expectOne(`${API_URL}/NonExistent`);
+    req.flush('Not found', { status: 404, statusText: 'Not Found' });
   });
 });

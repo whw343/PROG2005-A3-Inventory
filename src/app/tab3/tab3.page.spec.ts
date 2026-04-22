@@ -14,22 +14,26 @@ describe('Tab3Page', () => {
 
   const mockItems: InventoryItem[] = [
     {
-      itemId: 1,
-      itemName: 'Laptop',
-      itemCategory: 'Laptop',
-      itemQuantity: 10,
-      itemPrice: 1299.99,
-      featuredItem: 1,
-      specialNote: '',
+      item_id: 1,
+      item_name: 'Laptop',
+      category: 'Electronics',
+      quantity: 10,
+      price: 1299.99,
+      supplier_name: 'Apple',
+      stock_status: 'In stock',
+      featured_item: 1,
+      special_note: '',
     },
     {
-      itemId: 2,
-      itemName: 'Phone',
-      itemCategory: 'Phone',
-      itemQuantity: 20,
-      itemPrice: 699.99,
-      featuredItem: 0,
-      specialNote: '',
+      item_id: 2,
+      item_name: 'Phone',
+      category: 'Electronics',
+      quantity: 20,
+      price: 699.99,
+      supplier_name: 'Samsung',
+      stock_status: 'Low stock',
+      featured_item: 0,
+      special_note: '',
     },
   ];
 
@@ -66,8 +70,8 @@ describe('Tab3Page', () => {
     component.selectItem(mockItems[1]);
 
     expect(component.selectedItem).toEqual(mockItems[1]);
-    expect(component.editData.itemName).toBe('Phone');
-    expect(component.editData.itemQuantity).toBe(20);
+    expect(component.editData.item_name).toBe('Phone');
+    expect(component.editData.quantity).toBe(20);
   });
 
   it('should prevent deletion of protected Laptop items', () => {
@@ -90,32 +94,60 @@ describe('Tab3Page', () => {
     expect(component.deleteTarget).toEqual(mockItems[1]);
   });
 
-  it('should update item via API with changed fields only', () => {
+  it('should update item via API with name-based endpoint and changed fields only', () => {
     apiService.getAllItems.and.returnValue(of(mockItems));
-    apiService.updateItem.and.returnValue(of({ ...mockItems[1], itemQuantity: 25 }));
+    apiService.updateItem.and.returnValue(of({}));
     fixture.detectChanges();
 
     component.selectItem(mockItems[1]);
-    component.editData.itemQuantity = 25;
+    component.editData.quantity = 25;
     component.onUpdate();
 
-    expect(apiService.updateItem).toHaveBeenCalledWith(2, jasmine.objectContaining({ itemQuantity: 25 }));
+    // Should call updateItem with the item NAME, not ID
+    expect(apiService.updateItem).toHaveBeenCalledWith('Phone', jasmine.objectContaining({ quantity: 25 }));
   });
 
-  it('should delete item via API after confirmation', () => {
+  it('should delete item via API with name-based endpoint after confirmation', () => {
     apiService.getAllItems.and.returnValue(of(mockItems));
-    apiService.deleteItem.and.returnValue(of(undefined));
-    apiService.getAllItems.and.returnValue(of([mockItems[0]]));
+    apiService.deleteItem.and.returnValue(of({}));
     fixture.detectChanges();
 
     component.deleteTarget = mockItems[1];
     component.showDeleteConfirm = true;
-    component.performDelete();
+    component.executeDelete();
 
-    expect(apiService.deleteItem).toHaveBeenCalledWith(2);
+    // Should call deleteItem with the item NAME, not ID
+    expect(apiService.deleteItem).toHaveBeenCalledWith('Phone');
+  });
+
+  it('should cancel editing and clear state', () => {
+    apiService.getAllItems.and.returnValue(of(mockItems));
+    fixture.detectChanges();
+
+    component.selectItem(mockItems[1]);
+    component.cancelEdit();
+
+    expect(component.selectedItem).toBeNull();
+    expect(component.editData).toEqual({});
+    expect(component.errors.length).toBe(0);
+  });
+
+  it('should detect no changes and show error', () => {
+    apiService.getAllItems.and.returnValue(of(mockItems));
+    fixture.detectChanges();
+
+    component.selectItem(mockItems[1]);
+    // Don't change anything
+    component.onUpdate();
+
+    expect(component.errors).toContain('No changes detected');
   });
 
   it('should have help tips defined', () => {
     expect(component.helpTips.length).toBeGreaterThan(0);
+  });
+
+  it('should format price correctly', () => {
+    expect(component.formatPrice(699.99)).toBe('$699.99');
   });
 });

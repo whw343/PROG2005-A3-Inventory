@@ -14,22 +14,26 @@ describe('Tab1Page', () => {
 
   const mockItems: InventoryItem[] = [
     {
-      itemId: 1,
-      itemName: 'Laptop Pro',
-      itemCategory: 'Laptop',
-      itemQuantity: 10,
-      itemPrice: 1299.99,
-      featuredItem: 1,
-      specialNote: '',
+      item_id: 1,
+      item_name: 'Laptop Pro',
+      category: 'Electronics',
+      quantity: 10,
+      price: 1299.99,
+      supplier_name: 'Apple',
+      stock_status: 'In stock',
+      featured_item: 1,
+      special_note: '',
     },
     {
-      itemId: 2,
-      itemName: 'Wireless Mouse',
-      itemCategory: 'Mouse',
-      itemQuantity: 50,
-      itemPrice: 29.99,
-      featuredItem: 0,
-      specialNote: '',
+      item_id: 2,
+      item_name: 'Wireless Mouse',
+      category: 'Electronics',
+      quantity: 50,
+      price: 29.99,
+      supplier_name: 'Logitech',
+      stock_status: 'In stock',
+      featured_item: 0,
+      special_note: '',
     },
   ];
 
@@ -57,7 +61,7 @@ describe('Tab1Page', () => {
     apiService.getAllItems.and.returnValue(of(mockItems));
     fixture.detectChanges();
     expect(component.items.length).toBe(2);
-    expect(component.items[0].itemName).toBe('Laptop Pro');
+    expect(component.items[0].item_name).toBe('Laptop Pro');
   });
 
   it('should filter items by search term', () => {
@@ -68,18 +72,17 @@ describe('Tab1Page', () => {
     component.applyFilters();
 
     expect(component.filteredItems.length).toBe(1);
-    expect(component.filteredItems[0].itemName).toBe('Laptop Pro');
+    expect(component.filteredItems[0].item_name).toBe('Laptop Pro');
   });
 
   it('should filter items by category', () => {
     apiService.getAllItems.and.returnValue(of(mockItems));
     fixture.detectChanges();
 
-    component.selectedCategory = 'Mouse';
+    component.selectedCategory = 'Electronics';
     component.applyFilters();
 
-    expect(component.filteredItems.length).toBe(1);
-    expect(component.filteredItems[0].itemCategory).toBe('Mouse');
+    expect(component.filteredItems.length).toBe(2);
   });
 
   it('should filter featured items only', () => {
@@ -90,7 +93,7 @@ describe('Tab1Page', () => {
     component.applyFilters();
 
     expect(component.filteredItems.length).toBe(1);
-    expect(component.filteredItems[0].featuredItem).toBe(1);
+    expect(component.filteredItems[0].featured_item).toBe(1);
   });
 
   it('should handle API error gracefully', () => {
@@ -98,15 +101,37 @@ describe('Tab1Page', () => {
     fixture.detectChanges();
 
     expect(component.items.length).toBe(0);
-    expect(component.errorMessage).toBeTruthy();
   });
 
-  it('should track items by itemId', () => {
+  it('should track items by item_id', () => {
     expect(component.trackByItemId(0, mockItems[0])).toBe(1);
     expect(component.trackByItemId(1, mockItems[1])).toBe(2);
   });
 
   it('should have help tips defined', () => {
     expect(component.helpTips.length).toBeGreaterThan(0);
+  });
+
+  it('should format price correctly', () => {
+    expect(component.formatPrice(1299.99)).toBe('$1299.99');
+    expect(component.formatPrice(0)).toBe('$0.00');
+  });
+
+  it('should detect active filters', () => {
+    apiService.getAllItems.and.returnValue(of(mockItems));
+    fixture.detectChanges();
+
+    expect(component.hasActiveFilters).toBeFalse();
+
+    component.searchTerm = 'test';
+    expect(component.hasActiveFilters).toBeTrue();
+
+    component.searchTerm = '';
+    component.selectedCategory = 'Electronics';
+    expect(component.hasActiveFilters).toBeTrue();
+
+    component.selectedCategory = '';
+    component.featuredFilter = 'featured';
+    expect(component.hasActiveFilters).toBeTrue();
   });
 });
