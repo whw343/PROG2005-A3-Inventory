@@ -1,0 +1,198 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Update & Delete</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Update & Delete</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Feedback messages -->
+  <ion-card *ngIf="successMessage" class="feedback-card" color="success">
+    <ion-card-content>
+      <p>{{ successMessage }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="errors.length > 0" class="feedback-card" color="danger">
+    <ion-card-content>
+      <p *ngFor="let err of errors">{{ err }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Edit form (shown when item selected) -->
+  <div *ngIf="selectedItem" class="edit-section">
+    <ion-list-header>
+      <ion-label>Editing: {{ selectedItem.itemName }}</ion-label>
+      <ion-button fill="clear" size="small" (click)="cancelEdit()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-list-header>
+
+    <ion-list class="edit-form">
+      <ion-item>
+        <ion-input
+          [(ngModel)]="editData.itemName"
+          label="Item Name"
+          label-placement="stacked"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="editData.itemCategory"
+          label="Category"
+          label-placement="stacked"
+          interface="popover"
+        >
+          <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          [(ngModel)]="editData.itemQuantity"
+          label="Quantity"
+          label-placement="stacked"
+          type="number"
+          min="0"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          [(ngModel)]="editData.itemPrice"
+          label="Price (AUD)"
+          label-placement="stacked"
+          type="number"
+          min="0"
+          step="0.01"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="editData.featuredItem"
+          label="Featured"
+          label-placement="stacked"
+          interface="popover"
+        >
+          <ion-select-option [value]="0">No</ion-select-option>
+          <ion-select-option [value]="1">Yes</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          [(ngModel)]="editData.specialNote"
+          label="Special Note"
+          label-placement="stacked"
+          rows="3"
+        ></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <div class="edit-actions">
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="onUpdate()"
+        [disabled]="isUpdating"
+      >
+        <ion-spinner *ngIf="isUpdating" name="crescent" slot="start"></ion-spinner>
+        {{ isUpdating ? 'Updating...' : 'Update Item' }}
+      </ion-button>
+      <ion-button expand="block" fill="outline" color="medium" (click)="cancelEdit()">
+        Cancel
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Item list -->
+  <div *ngIf="!isLoading && items.length === 0" class="state-container">
+    <p>No items available. Add items first.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="state-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading...</p>
+  </div>
+
+  <ion-list *ngIf="!isLoading && items.length > 0" lines="full">
+    <ion-item-sliding *ngFor="let item of items; trackBy: trackByItemId">
+      <ion-item
+        [detail]="false"
+        class="list-item"
+        [class.selected]="selectedItem?.itemId === item.itemId"
+        (click)="selectItem(item)"
+      >
+        <div class="item-content" slot="start">
+          <div class="item-header">
+            <span class="item-name">{{ item.itemName }}</span>
+            <ion-badge *ngIf="item.featuredItem === 1" color="warning" class="featured-badge">
+              <ion-icon name="star"></ion-icon>
+            </ion-badge>
+            <ion-badge *ngIf="item.itemName === protectedName" color="medium" class="protected-badge">
+              Protected
+            </ion-badge>
+          </div>
+          <div class="item-meta">
+            <span class="meta-text">{{ item.itemCategory }}</span>
+            <span class="meta-text">Qty: {{ item.itemQuantity }}</span>
+            <span class="meta-text price">{{ formatPrice(item.itemPrice) }}</span>
+          </div>
+        </div>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option
+          color="danger"
+          (click)="confirmDelete(item)"
+          [disabled]="item.itemName === protectedName"
+        >
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Delete confirmation modal -->
+  <ion-modal [isOpen]="showDeleteConfirm" (didDismiss)="cancelDelete()" class="delete-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="danger">
+          <ion-title>Confirm Delete</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cancelDelete()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="delete-confirm-content">
+          <ion-icon name="trash-outline" class="delete-icon" color="danger"></ion-icon>
+          <h3>Delete this item?</h3>
+          <p class="delete-item-name">{{ deleteTarget?.itemName }}</p>
+          <p class="delete-warning">This action cannot be undone.</p>
+          <div class="delete-actions">
+            <ion-button expand="block" color="danger" (click)="executeDelete()" [disabled]="isDeleting">
+              <ion-spinner *ngIf="isDeleting" name="crescent" slot="start"></ion-spinner>
+              {{ isDeleting ? 'Deleting...' : 'Delete' }}
+            </ion-button>
+            <ion-button expand="block" fill="outline" color="medium" (click)="cancelDelete()">
+              Cancel
+            </ion-button>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Help widget -->
+  <app-help-widget [tips]="helpTips" pageTitle="Update & Delete"></app-help-widget>
+</ion-content>

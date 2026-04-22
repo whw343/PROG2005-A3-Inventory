@@ -1,0 +1,173 @@
+// Update & Delete page styles
+
+.feedback-card {
+  margin: 12px 12px 0;
+  border-radius: 10px;
+
+  ion-card-content {
+    padding: 12px 16px;
+
+    p {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+}
+
+.edit-section {
+  padding: 0 12px;
+  margin-bottom: 16px;
+
+  ion-list-header {
+    padding: 12px 4px 4px;
+
+    ion-label {
+      font-weight: 700;
+      font-size: 16px;
+    }
+  }
+
+  .edit-form {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+
+    ion-item {
+      --padding-start: 16px;
+      --padding-end: 16px;
+    }
+  }
+
+  .edit-actions {
+    ion-button {
+      --border-radius: 10px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+  }
+}
+
+// Item list
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+
+  p {
+    color: var(--ion-color-medium);
+  }
+}
+
+.list-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 68px;
+
+  &.selected {
+    --background: var(--ion-color-primary-tint);
+    --border-color: var(--ion-color-primary);
+  }
+
+  .item-content {
+    width: 100%;
+    padding: 6px 0;
+  }
+
+  .item-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .item-name {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .featured-badge {
+    font-size: 10px;
+    --padding-start: 4px;
+    --padding-end: 4px;
+    border-radius: 8px;
+
+    ion-icon {
+      font-size: 10px;
+    }
+  }
+
+  .protected-badge {
+    font-size: 9px;
+    --padding-start: 5px;
+    --padding-end: 5px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .item-meta {
+    display: flex;
+    gap: 10px;
+
+    .meta-text {
+      font-size: 13px;
+      color: var(--ion-color-medium);
+
+      &.price {
+        font-weight: 600;
+        color: var(--ion-color-dark);
+      }
+    }
+  }
+}
+
+// Delete modal
+.delete-modal {
+  --height: auto;
+  --max-height: 80vh;
+  --border-radius: 16px 16px 0 0;
+}
+
+.delete-confirm-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 24px;
+
+  .delete-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .delete-item-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ion-color-primary);
+  }
+
+  .delete-warning {
+    color: var(--ion-color-danger);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  .delete-actions {
+    width: 100%;
+    margin-top: 24px;
+
+    ion-button {
+      --border-radius: 10px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+  }
+}
