@@ -30,7 +30,7 @@
     <ion-list class="form-list">
       <ion-item>
         <ion-input
-          [(ngModel)]="formData.itemName"
+          [(ngModel)]="formData.item_name"
           label="Item Name"
           label-placement="stacked"
           placeholder="e.g., MacBook Pro 16"
@@ -40,7 +40,7 @@
 
       <ion-item>
         <ion-select
-          [(ngModel)]="formData.itemCategory"
+          [(ngModel)]="formData.category"
           label="Category"
           label-placement="stacked"
           interface="popover"
@@ -52,7 +52,7 @@
 
       <ion-item>
         <ion-input
-          [(ngModel)]="formData.itemQuantity"
+          [(ngModel)]="formData.quantity"
           label="Quantity"
           label-placement="stacked"
           type="number"
@@ -64,7 +64,7 @@
 
       <ion-item>
         <ion-input
-          [(ngModel)]="formData.itemPrice"
+          [(ngModel)]="formData.price"
           label="Price (AUD)"
           label-placement="stacked"
           type="number"
@@ -76,8 +76,30 @@
       </ion-item>
 
       <ion-item>
+        <ion-input
+          [(ngModel)]="formData.supplier_name"
+          label="Supplier Name"
+          label-placement="stacked"
+          placeholder="e.g., Apple, Samsung"
+          [required]="true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
         <ion-select
-          [(ngModel)]="formData.featuredItem"
+          [(ngModel)]="formData.stock_status"
+          label="Stock Status"
+          label-placement="stacked"
+          interface="popover"
+          [required]="true"
+        >
+          <ion-select-option *ngFor="let s of stockStatuses" [value]="s">{{ s }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="formData.featured_item"
           label="Featured"
           label-placement="stacked"
           interface="popover"
@@ -89,7 +111,7 @@
 
       <ion-item>
         <ion-textarea
-          [(ngModel)]="formData.specialNote"
+          [(ngModel)]="formData.special_note"
           label="Special Note"
           label-placement="stacked"
           placeholder="Optional notes about this item..."
@@ -120,6 +142,24 @@
         Reset
       </ion-button>
     </div>
+  </div>
+
+  <!-- Featured Items Section -->
+  <div class="featured-section" *ngIf="featuredItems.length > 0">
+    <ion-list-header>
+      <ion-label>Featured Items</ion-label>
+    </ion-list-header>
+    <ion-list lines="full">
+      <ion-item *ngFor="let item of featuredItems; trackBy: trackByItemId">
+        <ion-icon name="star" slot="start" color="warning"></ion-icon>
+        <ion-label>
+          <h2>{{ item.item_name }}</h2>
+          <p>{{ item.category }} &middot; Qty: {{ item.quantity }} &middot; {{ formatPrice(item.price) }}</p>
+          <p *ngIf="item.supplier_name">Supplier: {{ item.supplier_name }}</p>
+        </ion-label>
+        <ion-badge [color]="getStockColor(item.stock_status)" slot="end">{{ item.stock_status }}</ion-badge>
+      </ion-item>
+    </ion-list>
   </div>
 
   <!-- Help widget -->
