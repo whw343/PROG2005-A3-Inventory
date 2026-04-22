@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PROG2005 A3 Inventory</string>
+    <string name="title_activity_main">PROG2005 A3 Inventory</string>
+    <string name="package_name">au.edu.scu.prog2005.a3</string>
+    <string name="custom_url_scheme">au.edu.scu.prog2005.a3</string>
+</resources>
