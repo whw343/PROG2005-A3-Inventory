@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Privacy & Security</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Intro -->
+  <ion-card class="intro-card">
+    <ion-card-content>
+      <div class="intro-header">
+        <ion-icon name="shield-checkmark-outline" class="intro-icon" color="primary"></ion-icon>
+        <div>
+          <h2>Mobile Security Analysis</h2>
+          <p>Security considerations specific to the Ionic/Capacitor mobile inventory application</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Security Topics -->
+  <h3 class="section-title">Key Security Considerations</h3>
+
+  <ion-card *ngFor="let topic of securityTopics" class="topic-card">
+    <ion-card-header>
+      <ion-card-subtitle>
+        <ion-icon [name]="topic.icon" [color]="topic.color"></ion-icon>
+        {{ topic.title }}
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p class="topic-desc">{{ topic.description }}</p>
+      <ion-list lines="none" class="practice-list">
+        <ion-item *ngFor="let practice of topic.practices">
+          <ion-icon name="checkmark-circle-outline" color="success" slot="start"></ion-icon>
+          <ion-label class="practice-text">{{ practice }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Best Practices -->
+  <h3 class="section-title">Best Practices for This App</h3>
+
+  <ion-list lines="full" class="best-practices-list">
+    <ion-item *ngFor="let bp of bestPractices" class="practice-item">
+      <ion-icon name="checkmark-circle-outline" color="success" slot="start"></ion-icon>
+      <ion-label>
+        <h3>{{ bp.title }}</h3>
+        <p>{{ bp.description }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- References -->
+  <h3 class="section-title">References</h3>
+
+  <ion-list lines="full" class="reference-list">
+    <ion-item *ngFor="let ref of references" [button]="true" (click)="openLink(ref.url)">
+      <ion-icon name="link-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>{{ ref.title }}</ion-label>
+      <ion-icon name="open-outline" slot="end" color="medium"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <!-- GenAI Declaration -->
+  <h3 class="section-title">GenAI Use Declaration</h3>
+
+  <ion-card class="genai-card">
+    <ion-card-content>
+      <p><strong>Level 2 — Permitted Use of Generative AI</strong></p>
+      <p>This assignment utilized generative AI tools for specific purposes within SCU guidelines:</p>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-icon name="checkmark-circle-outline" color="primary" slot="start"></ion-icon>
+          <ion-label><strong>Research:</strong> Exploring Ionic/Angular/Capacitor best practices and mobile security patterns</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="checkmark-circle-outline" color="primary" slot="start"></ion-icon>
+          <ion-label><strong>Architecture:</strong> Ideating project structure and component design patterns</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="checkmark-circle-outline" color="primary" slot="start"></ion-icon>
+          <ion-label><strong>Debugging:</strong> Identifying and resolving compatibility issues across Angular/Ionic/Capacitor versions</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="checkmark-circle-outline" color="primary" slot="start"></ion-icon>
+          <ion-label><strong>Code Review:</strong> Reviewing generated code for correctness and security</ion-label>
+        </ion-item>
+      </ion-list>
+      <p class="genai-disclaimer">
+        All code was reviewed, understood, and modified by the author. The student takes full responsibility for the final implementation and can explain any part of the codebase.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Course info -->
+  <ion-card class="info-card">
+    <ion-card-content>
+      <p><strong>Course:</strong> PROG2005 — Programming Mobile Systems</p>
+      <p><strong>Author:</strong> Hanyu Man (whw343)</p>
+      <p><strong>Institution:</strong> Southern Cross University</p>
+      <p><strong>Assignment:</strong> Assessment 3 — Ionic Mobile App</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

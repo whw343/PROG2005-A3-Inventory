@@ -1,0 +1,192 @@
+// Privacy & Security page styles
+
+.section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 20px 4px 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--ion-color-light-shade);
+}
+
+// Intro card
+.intro-card {
+  margin: 0 0 8px;
+  border-radius: 14px;
+
+  ion-card-content {
+    padding: 16px;
+  }
+
+  .intro-header {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .intro-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+// Topic cards
+.topic-card {
+  margin: 0 0 12px;
+  border-radius: 12px;
+
+  ion-card-header {
+    padding-bottom: 4px;
+  }
+
+  ion-card-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .topic-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ion-color-medium);
+    margin-bottom: 8px;
+  }
+
+  .practice-list {
+    background: transparent;
+    padding: 0;
+
+    ion-item {
+      --padding-start: 8px;
+      --min-height: 36px;
+
+      ion-icon {
+        font-size: 16px;
+      }
+    }
+
+    .practice-text {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Best practices list
+.best-practices-list {
+  margin-bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .practice-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+
+    ion-icon {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 13px;
+      color: var(--ion-color-medium);
+      line-height: 1.4;
+    }
+  }
+}
+
+// Reference list
+.reference-list {
+  margin-bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+
+    ion-label {
+      font-size: 14px;
+    }
+  }
+}
+
+// GenAI card
+.genai-card {
+  margin: 0 0 12px;
+  border-radius: 12px;
+
+  ion-card-content {
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    ion-item {
+      --padding-start: 4px;
+      --min-height: 40px;
+
+      ion-icon {
+        font-size: 16px;
+      }
+
+      ion-label {
+        font-size: 13px;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .genai-disclaimer {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--ion-color-warning-tint, #fff8e1);
+    border-radius: 8px;
+    border-left: 3px solid var(--ion-color-warning);
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+// Info card
+.info-card {
+  margin: 0 0 24px;
+  border-radius: 12px;
+
+  ion-card-content {
+    p {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
