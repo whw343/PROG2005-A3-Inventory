@@ -1,0 +1,148 @@
+// Inventory list page styles
+
+.inventory-search {
+  --background: var(--ion-background-color, #fff);
+  --box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  padding: 0 16px 8px;
+  gap: 4px;
+
+  .item-count {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    font-weight: 500;
+  }
+}
+
+.filter-badge {
+  margin-left: 4px;
+  font-size: 10px;
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+
+.filter-panel {
+  margin: 0 12px 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--ion-item-background, #fff);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+  ion-list {
+    padding: 4px 0;
+  }
+
+  ion-item {
+    --padding-start: 12px;
+    --padding-end: 12px;
+  }
+}
+
+// State containers
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+
+  p {
+    color: var(--ion-color-medium);
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  &.empty-state {
+    .state-icon {
+      font-size: 48px;
+      color: var(--ion-color-medium-shade);
+      margin-bottom: 8px;
+    }
+  }
+}
+
+// Inventory item card
+.inventory-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 80px;
+
+  .item-content {
+    width: 100%;
+    padding: 8px 0;
+  }
+
+  .item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .item-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ion-text-color);
+  }
+
+  .featured-badge {
+    font-size: 10px;
+    --padding-start: 6px;
+    --padding-end: 6px;
+    --padding-top: 2px;
+    --padding-bottom: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    ion-icon {
+      font-size: 11px;
+    }
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .category-badge {
+    font-size: 11px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --padding-top: 2px;
+    --padding-bottom: 2px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .meta-text {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+
+    &.price {
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+  }
+
+  .item-note {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+    margin-top: 4px;
+    margin-bottom: 0;
+    line-height: 1.4;
+  }
+}

@@ -1,0 +1,132 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Inventory</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Collapsible large title for iOS -->
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Inventory</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Search bar -->
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="applyFilters()"
+    placeholder="Search by name..."
+    search-icon="search-outline"
+    class="inventory-search"
+  ></ion-searchbar>
+
+  <!-- Filter toggle button -->
+  <div class="filter-bar">
+    <ion-button
+      fill="clear"
+      size="small"
+      (click)="toggleFilters()"
+      [color]="hasActiveFilters ? 'primary' : 'medium'"
+    >
+      <ion-icon name="funnel-outline" slot="start"></ion-icon>
+      Filters
+      <ion-badge *ngIf="hasActiveFilters" color="primary" class="filter-badge">!</ion-badge>
+    </ion-button>
+
+    <ion-button
+      *ngIf="hasActiveFilters"
+      fill="clear"
+      size="small"
+      color="danger"
+      (click)="resetFilters()"
+    >
+      <ion-icon name="close-outline" slot="start"></ion-icon>
+      Clear
+    </ion-button>
+
+    <span class="item-count">{{ filteredItems.length }} item{{ filteredItems.length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <!-- Filter panel (collapsible) -->
+  <div *ngIf="showFilters" class="filter-panel">
+    <ion-list lines="none">
+      <ion-item>
+        <ion-select
+          [(ngModel)]="selectedCategory"
+          (ionChange)="applyFilters()"
+          interface="popover"
+          placeholder="All Categories"
+          label="Category"
+          label-placement="stacked"
+        >
+          <ion-select-option value="">All Categories</ion-select-option>
+          <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="featuredFilter"
+          (ionChange)="applyFilters()"
+          interface="popover"
+          label="Featured"
+          label-placement="stacked"
+        >
+          <ion-select-option value="all">All Items</ion-select-option>
+          <ion-select-option value="featured">Featured Only</ion-select-option>
+          <ion-select-option value="normal">Non-Featured Only</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Pull-to-refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="state-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading inventory...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && filteredItems.length === 0" class="state-container empty-state">
+    <ion-icon name="search-outline" class="state-icon"></ion-icon>
+    <p *ngIf="hasActiveFilters">No items match your filters.</p>
+    <p *ngIf="!hasActiveFilters">No inventory items found.</p>
+    <ion-button *ngIf="hasActiveFilters" fill="clear" size="small" (click)="resetFilters()">
+      Clear Filters
+    </ion-button>
+  </div>
+
+  <!-- Item list -->
+  <ion-list *ngIf="!isLoading && filteredItems.length > 0" lines="full">
+    <ion-item-sliding *ngFor="let item of filteredItems; trackBy: trackByItemId">
+      <ion-item [detail]="false" class="inventory-item">
+        <div class="item-content" slot="start">
+          <div class="item-header">
+            <span class="item-name">{{ item.itemName }}</span>
+            <ion-badge *ngIf="item.featuredItem === 1" color="warning" class="featured-badge">
+              <ion-icon name="star"></ion-icon>
+              Featured
+            </ion-badge>
+          </div>
+          <div class="item-meta">
+            <ion-badge [color]="getCategoryColor(item.itemCategory)" outline class="category-badge">
+              {{ item.itemCategory }}
+            </ion-badge>
+            <span class="meta-text">Qty: {{ item.itemQuantity }}</span>
+            <span class="meta-text price">{{ formatPrice(item.itemPrice) }}</span>
+          </div>
+          <p *ngIf="item.specialNote" class="item-note">{{ item.specialNote }}</p>
+        </div>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Help widget -->
+  <app-help-widget [tips]="helpTips" pageTitle="Inventory List"></app-help-widget>
+</ion-content>
