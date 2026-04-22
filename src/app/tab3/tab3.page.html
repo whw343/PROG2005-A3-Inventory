@@ -27,7 +27,7 @@
   <!-- Edit form (shown when item selected) -->
   <div *ngIf="selectedItem" class="edit-section">
     <ion-list-header>
-      <ion-label>Editing: {{ selectedItem.itemName }}</ion-label>
+      <ion-label>Editing: {{ selectedItem.item_name }}</ion-label>
       <ion-button fill="clear" size="small" (click)="cancelEdit()">
         <ion-icon name="close-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -36,7 +36,7 @@
     <ion-list class="edit-form">
       <ion-item>
         <ion-input
-          [(ngModel)]="editData.itemName"
+          [(ngModel)]="editData.item_name"
           label="Item Name"
           label-placement="stacked"
         ></ion-input>
@@ -44,7 +44,7 @@
 
       <ion-item>
         <ion-select
-          [(ngModel)]="editData.itemCategory"
+          [(ngModel)]="editData.category"
           label="Category"
           label-placement="stacked"
           interface="popover"
@@ -55,7 +55,7 @@
 
       <ion-item>
         <ion-input
-          [(ngModel)]="editData.itemQuantity"
+          [(ngModel)]="editData.quantity"
           label="Quantity"
           label-placement="stacked"
           type="number"
@@ -65,7 +65,7 @@
 
       <ion-item>
         <ion-input
-          [(ngModel)]="editData.itemPrice"
+          [(ngModel)]="editData.price"
           label="Price (AUD)"
           label-placement="stacked"
           type="number"
@@ -75,8 +75,27 @@
       </ion-item>
 
       <ion-item>
+        <ion-input
+          [(ngModel)]="editData.supplier_name"
+          label="Supplier Name"
+          label-placement="stacked"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
         <ion-select
-          [(ngModel)]="editData.featuredItem"
+          [(ngModel)]="editData.stock_status"
+          label="Stock Status"
+          label-placement="stacked"
+          interface="popover"
+        >
+          <ion-select-option *ngFor="let s of stockStatuses" [value]="s">{{ s }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          [(ngModel)]="editData.featured_item"
           label="Featured"
           label-placement="stacked"
           interface="popover"
@@ -88,7 +107,7 @@
 
       <ion-item>
         <ion-textarea
-          [(ngModel)]="editData.specialNote"
+          [(ngModel)]="editData.special_note"
           label="Special Note"
           label-placement="stacked"
           rows="3"
@@ -127,23 +146,23 @@
       <ion-item
         [detail]="false"
         class="list-item"
-        [class.selected]="selectedItem?.itemId === item.itemId"
+        [class.selected]="selectedItem?.item_id === item.item_id"
         (click)="selectItem(item)"
       >
         <div class="item-content" slot="start">
           <div class="item-header">
-            <span class="item-name">{{ item.itemName }}</span>
-            <ion-badge *ngIf="item.featuredItem === 1" color="warning" class="featured-badge">
+            <span class="item-name">{{ item.item_name }}</span>
+            <ion-badge *ngIf="item.featured_item === 1" color="warning" class="featured-badge">
               <ion-icon name="star"></ion-icon>
             </ion-badge>
-            <ion-badge *ngIf="item.itemName === protectedName" color="medium" class="protected-badge">
+            <ion-badge *ngIf="item.item_name === protectedName" color="medium" class="protected-badge">
               Protected
             </ion-badge>
           </div>
           <div class="item-meta">
-            <span class="meta-text">{{ item.itemCategory }}</span>
-            <span class="meta-text">Qty: {{ item.itemQuantity }}</span>
-            <span class="meta-text price">{{ formatPrice(item.itemPrice) }}</span>
+            <span class="meta-text">{{ item.category }}</span>
+            <span class="meta-text">Qty: {{ item.quantity }}</span>
+            <span class="meta-text price">{{ formatPrice(item.price) }}</span>
           </div>
         </div>
       </ion-item>
@@ -152,7 +171,7 @@
         <ion-item-option
           color="danger"
           (click)="confirmDelete(item)"
-          [disabled]="item.itemName === protectedName"
+          [disabled]="item.item_name === protectedName"
         >
           <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
         </ion-item-option>
@@ -177,7 +196,7 @@
         <div class="delete-confirm-content">
           <ion-icon name="trash-outline" class="delete-icon" color="danger"></ion-icon>
           <h3>Delete this item?</h3>
-          <p class="delete-item-name">{{ deleteTarget?.itemName }}</p>
+          <p class="delete-item-name">{{ deleteTarget?.item_name }}</p>
           <p class="delete-warning">This action cannot be undone.</p>
           <div class="delete-actions">
             <ion-button expand="block" color="danger" (click)="executeDelete()" [disabled]="isDeleting">

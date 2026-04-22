@@ -115,20 +115,20 @@ export class Tab1Page implements OnInit {
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase().trim();
       result = result.filter((item) =>
-        item.itemName.toLowerCase().includes(term)
+        item.item_name.toLowerCase().includes(term)
       );
     }
 
     // Category filter
     if (this.selectedCategory) {
-      result = result.filter((item) => item.itemCategory === this.selectedCategory);
+      result = result.filter((item) => item.category === this.selectedCategory);
     }
 
     // Featured filter
     if (this.featuredFilter === 'featured') {
-      result = result.filter((item) => item.featuredItem === 1);
+      result = result.filter((item) => item.featured_item === 1);
     } else if (this.featuredFilter === 'normal') {
-      result = result.filter((item) => item.featuredItem === 0);
+      result = result.filter((item) => item.featured_item === 0);
     }
 
     this.filteredItems = result;
@@ -159,15 +159,11 @@ export class Tab1Page implements OnInit {
 
   /** Category to color mapping for badges */
   private categoryColorMap: Record<string, string> = {
-    Laptop: 'primary',
-    Phone: 'secondary',
-    Tablet: 'tertiary',
-    Monitor: 'success',
-    Keyboard: 'warning',
-    Mouse: 'medium',
-    Headset: 'danger',
-    Camera: 'purple',
-    Printer: 'dark',
+    Electronics: 'primary',
+    Furniture: 'secondary',
+    Tools: 'tertiary',
+    'Office Supplies': 'success',
+    Software: 'warning',
     Other: 'medium',
   };
 
@@ -177,6 +173,6 @@ export class Tab1Page implements OnInit {
 
   /** TrackBy for ngFor optimization */
   trackByItemId(_index: number, item: InventoryItem): number {
-    return item.itemId;
+    return item.item_id;
   }
 }

@@ -108,20 +108,20 @@
       <ion-item [detail]="false" class="inventory-item">
         <div class="item-content" slot="start">
           <div class="item-header">
-            <span class="item-name">{{ item.itemName }}</span>
-            <ion-badge *ngIf="item.featuredItem === 1" color="warning" class="featured-badge">
+            <span class="item-name">{{ item.item_name }}</span>
+            <ion-badge *ngIf="item.featured_item === 1" color="warning" class="featured-badge">
               <ion-icon name="star"></ion-icon>
               Featured
             </ion-badge>
           </div>
           <div class="item-meta">
-            <ion-badge [color]="getCategoryColor(item.itemCategory)" outline class="category-badge">
-              {{ item.itemCategory }}
+            <ion-badge [color]="getCategoryColor(item.category)" outline class="category-badge">
+              {{ item.category }}
             </ion-badge>
-            <span class="meta-text">Qty: {{ item.itemQuantity }}</span>
-            <span class="meta-text price">{{ formatPrice(item.itemPrice) }}</span>
+            <span class="meta-text">Qty: {{ item.quantity }}</span>
+            <span class="meta-text price">{{ formatPrice(item.price) }}</span>
           </div>
-          <p *ngIf="item.specialNote" class="item-note">{{ item.specialNote }}</p>
+          <p *ngIf="item.special_note" class="item-note">{{ item.special_note }}</p>
         </div>
       </ion-item>
     </ion-item-sliding>

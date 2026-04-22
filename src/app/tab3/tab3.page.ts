@@ -9,7 +9,7 @@ import {
   starOutline,
 } from 'ionicons/icons';
 import { ApiService } from '../services/api.service';
-import { InventoryItem, UpdateInventoryItem, ITEM_CATEGORIES, PROTECTED_ITEM_NAME } from '../models';
+import { InventoryItem, UpdateInventoryItem, ITEM_CATEGORIES, STOCK_STATUSES, PROTECTED_ITEM_NAME } from '../models';
 import { HelpTip } from '../components/help-widget/help-widget.component';
 
 @Component({
@@ -20,6 +20,7 @@ import { HelpTip } from '../components/help-widget/help-widget.component';
 })
 export class Tab3Page implements OnInit {
   categories = ITEM_CATEGORIES;
+  stockStatuses = STOCK_STATUSES;
   protectedName = PROTECTED_ITEM_NAME;
 
   /** All items */
@@ -48,12 +49,12 @@ export class Tab3Page implements OnInit {
   helpTips: HelpTip[] = [
     {
       title: 'Updating Items',
-      description: 'Select an item from the list, modify the fields you want to change, then tap "Update Item". Only modified fields are sent to the API.',
+      description: 'Select an item from the list, modify the fields you want to change, then tap "Update Item". The update uses the item name as the identifier.',
       icon: 'create-outline',
     },
     {
       title: 'Deleting Items',
-      description: 'Swipe left on any item to reveal the delete action. A confirmation dialog will appear before deletion.',
+      description: 'Swipe left on any item to reveal the delete action. A confirmation dialog will appear before deletion. Deletion uses the item name.',
       icon: 'trash-outline',
     },
     {
@@ -94,12 +95,14 @@ export class Tab3Page implements OnInit {
   selectItem(item: InventoryItem): void {
     this.selectedItem = item;
     this.editData = {
-      itemName: item.itemName,
-      itemCategory: item.itemCategory,
-      itemQuantity: item.itemQuantity,
-      itemPrice: item.itemPrice,
-      featuredItem: item.featuredItem,
-      specialNote: item.specialNote || '',
+      item_name: item.item_name,
+      category: item.category,
+      quantity: item.quantity,
+      price: item.price,
+      supplier_name: item.supplier_name,
+      stock_status: item.stock_status,
+      featured_item: item.featured_item,
+      special_note: item.special_note || '',
     };
     this.errors = [];
     this.successMessage = '';
@@ -117,22 +120,22 @@ export class Tab3Page implements OnInit {
   private validateEdit(): string[] {
     const errs: string[] = [];
 
-    if (this.editData.itemName !== undefined && !this.editData.itemName.trim()) {
+    if (this.editData.item_name !== undefined && !this.editData.item_name.trim()) {
       errs.push('Item name cannot be empty');
     }
 
-    if (this.editData.itemQuantity !== undefined && (isNaN(this.editData.itemQuantity) || this.editData.itemQuantity < 0)) {
+    if (this.editData.quantity !== undefined && (isNaN(this.editData.quantity) || this.editData.quantity < 0)) {
       errs.push('Quantity must be a non-negative number');
     }
 
-    if (this.editData.itemPrice !== undefined && (isNaN(this.editData.itemPrice) || this.editData.itemPrice < 0)) {
+    if (this.editData.price !== undefined && (isNaN(this.editData.price) || this.editData.price < 0)) {
       errs.push('Price must be a non-negative number');
     }
 
     return errs;
   }
 
-  /** Submit update */
+  /** Submit update — uses item name as the resource identifier */
   onUpdate(): void {
     if (!this.selectedItem) return;
 
@@ -151,23 +154,29 @@ export class Tab3Page implements OnInit {
     const payload: UpdateInventoryItem = {};
     const original = this.selectedItem;
 
-    if (this.editData.itemName !== undefined && this.editData.itemName !== original.itemName) {
-      payload.itemName = this.editData.itemName.trim();
+    if (this.editData.item_name !== undefined && this.editData.item_name !== original.item_name) {
+      payload.item_name = this.editData.item_name.trim();
     }
-    if (this.editData.itemCategory !== undefined && this.editData.itemCategory !== original.itemCategory) {
-      payload.itemCategory = this.editData.itemCategory;
+    if (this.editData.category !== undefined && this.editData.category !== original.category) {
+      payload.category = this.editData.category;
     }
-    if (this.editData.itemQuantity !== undefined && this.editData.itemQuantity !== original.itemQuantity) {
-      payload.itemQuantity = this.editData.itemQuantity;
+    if (this.editData.quantity !== undefined && this.editData.quantity !== original.quantity) {
+      payload.quantity = this.editData.quantity;
     }
-    if (this.editData.itemPrice !== undefined && this.editData.itemPrice !== original.itemPrice) {
-      payload.itemPrice = this.editData.itemPrice;
+    if (this.editData.price !== undefined && this.editData.price !== original.price) {
+      payload.price = this.editData.price;
     }
-    if (this.editData.featuredItem !== undefined && this.editData.featuredItem !== original.featuredItem) {
-      payload.featuredItem = this.editData.featuredItem;
+    if (this.editData.supplier_name !== undefined && this.editData.supplier_name !== original.supplier_name) {
+      payload.supplier_name = this.editData.supplier_name;
     }
-    if (this.editData.specialNote !== undefined && this.editData.specialNote !== (original.specialNote || '')) {
-      payload.specialNote = this.editData.specialNote.trim() || undefined;
+    if (this.editData.stock_status !== undefined && this.editData.stock_status !== original.stock_status) {
+      payload.stock_status = this.editData.stock_status;
+    }
+    if (this.editData.featured_item !== undefined && this.editData.featured_item !== original.featured_item) {
+      payload.featured_item = this.editData.featured_item;
+    }
+    if (this.editData.special_note !== undefined && this.editData.special_note !== (original.special_note || '')) {
+      payload.special_note = this.editData.special_note.trim() || undefined;
     }
 
     if (Object.keys(payload).length === 0) {
@@ -176,9 +185,10 @@ export class Tab3Page implements OnInit {
       return;
     }
 
-    this.apiService.updateItem(this.selectedItem.itemId, payload).subscribe({
-      next: (updated) => {
-        this.successMessage = `Item "${updated.itemName}" updated successfully`;
+    // Use the original item name as the URL parameter
+    this.apiService.updateItem(original.item_name, payload).subscribe({
+      next: () => {
+        this.successMessage = `Item "${original.item_name}" updated successfully`;
         this.isUpdating = false;
         this.loadItems();
         this.selectedItem = null;
@@ -193,7 +203,7 @@ export class Tab3Page implements OnInit {
 
   /** Initiate delete (check protection) */
   confirmDelete(item: InventoryItem): void {
-    if (item.itemName === PROTECTED_ITEM_NAME) {
+    if (item.item_name === PROTECTED_ITEM_NAME) {
       this.errors = ['\'' + PROTECTED_ITEM_NAME + '\' items cannot be deleted (protected)'];
       return;
     }
@@ -201,15 +211,15 @@ export class Tab3Page implements OnInit {
     this.showDeleteConfirm = true;
   }
 
-  /** Execute delete */
+  /** Execute delete — uses item name as the resource identifier */
   executeDelete(): void {
     if (!this.deleteTarget) return;
 
     this.isDeleting = true;
-    this.apiService.deleteItem(this.deleteTarget.itemId).subscribe({
+    this.apiService.deleteItem(this.deleteTarget.item_name).subscribe({
       next: () => {
-        this.successMessage = `Item "${this.deleteTarget!.itemName}" deleted successfully`;
-        if (this.selectedItem?.itemId === this.deleteTarget!.itemId) {
+        this.successMessage = `Item "${this.deleteTarget!.item_name}" deleted successfully`;
+        if (this.selectedItem?.item_id === this.deleteTarget!.item_id) {
           this.cancelEdit();
         }
         this.showDeleteConfirm = false;
@@ -239,6 +249,6 @@ export class Tab3Page implements OnInit {
 
   /** TrackBy */
   trackByItemId(_index: number, item: InventoryItem): number {
-    return item.itemId;
+    return item.item_id;
   }
 }

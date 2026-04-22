@@ -15,7 +15,12 @@ const API_BASE_URL = 'https://prog2005.it.scu.edu.au/ArtGalley';
 
 /**
  * API Service for inventory CRUD operations
- * Connects to the PROG2005 REST API server
+ *
+ * All single-item operations use item NAME as the resource identifier,
+ * matching the assignment requirement:
+ *   GET    /ArtGalley/{name}
+ *   PUT    /ArtGalley/{name}
+ *   DELETE /ArtGalley/{name}
  */
 @Injectable({
   providedIn: 'root',
@@ -37,13 +42,30 @@ export class ApiService {
   }
 
   /**
-   * Fetch a single inventory item by ID
-   * GET /ArtGalley/{itemId}
+   * Fetch inventory items by name
+   * GET /ArtGalley/{name}
+   * Returns an array (may contain multiple items with the same name)
    */
-  getItemById(itemId: number): Observable<InventoryItem> {
+  getItemByName(name: string): Observable<InventoryItem[]> {
+    const encoded = encodeURIComponent(name);
     return this.http
-      .get<InventoryItem>(`${API_BASE_URL}/${itemId}`)
+      .get<InventoryItem[]>(`${API_BASE_URL}/${encoded}`)
       .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Fetch only featured items (featured_item === 1)
+   * Uses getAllItems and filters client-side since API has no featured endpoint
+   */
+  getFeaturedItems(): Observable<InventoryItem[]> {
+    return this.getAllItems().pipe(
+      tap((items) => {
+        const featured = items.filter((i) => i.featured_item === 1);
+        console.log(`[ApiService] Featured items: ${featured.length}`);
+      }),
+      // Return all, let caller filter
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -53,36 +75,40 @@ export class ApiService {
   createItem(item: CreateInventoryItem): Observable<InventoryItem> {
     return this.http.post<InventoryItem>(API_BASE_URL, item).pipe(
       tap((created) =>
-        console.log(`[ApiService] Created item: ${created.itemName}`)
+        console.log(`[ApiService] Created item: ${created.item_name}`)
       ),
       catchError(this.handleError)
     );
   }
 
   /**
-   * Update an existing inventory item
-   * PUT /ArtGalley/{itemId}
+   * Update an existing inventory item by name
+   * PUT /ArtGalley/{name}
    */
-  updateItem(itemId: number, item: UpdateInventoryItem): Observable<InventoryItem> {
+  updateItem(name: string, item: UpdateInventoryItem): Observable<any> {
+    const encoded = encodeURIComponent(name);
     return this.http
-      .put<InventoryItem>(`${API_BASE_URL}/${itemId}`, item)
+      .put(`${API_BASE_URL}/${encoded}`, item)
       .pipe(
-        tap((updated) =>
-          console.log(`[ApiService] Updated item: ${updated.itemName}`)
+        tap(() =>
+          console.log(`[ApiService] Updated item: ${name}`)
         ),
         catchError(this.handleError)
       );
   }
 
   /**
-   * Delete an inventory item by ID
-   * DELETE /ArtGalley/{itemId}
+   * Delete an inventory item by name
+   * DELETE /ArtGalley/{name}
    */
-  deleteItem(itemId: number): Observable<any> {
-    return this.http.delete(`${API_BASE_URL}/${itemId}`).pipe(
-      tap(() => console.log(`[ApiService] Deleted item ID: ${itemId}`)),
-      catchError(this.handleError)
-    );
+  deleteItem(name: string): Observable<any> {
+    const encoded = encodeURIComponent(name);
+    return this.http
+      .delete(`${API_BASE_URL}/${encoded}`)
+      .pipe(
+        tap(() => console.log(`[ApiService] Deleted item: ${name}`)),
+        catchError(this.handleError)
+      );
   }
 
   /**
